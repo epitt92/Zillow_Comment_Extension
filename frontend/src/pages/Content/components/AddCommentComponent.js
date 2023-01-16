@@ -18,7 +18,10 @@ const AddCommentComponent = ({setComments}) => {
       };
       console.log(newComment)
       const {data: {success, comments}} = await apiCaller.post("/comments", comment);
-      setComments(comments);
+      
+      if(success){ 
+        setComments(comments);
+      }
       console.log("comments =>"), comments;
     })
   };

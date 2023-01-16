@@ -24,7 +24,8 @@ const getComment = (req , res)=> {
 }
 
 const addComment = (req , res)=> {
-  const {username, url, content} = req.body
+  console.log("add comment")
+  const {username, content, url} = req.body
   const comment = new Comment({
       username,
       url,
