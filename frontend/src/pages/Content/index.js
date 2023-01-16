@@ -32,11 +32,11 @@ app.id = "my-extension-root";
 // chrome.tabs.onCreated.addListener( (tabInfo) => {
 //   console.log("Tab iss created", tabInfo)
 // })
-if(window.location.href.includes('http://www.zillow.com') || window.location.href.includes('https://www.zillow.com')) {
+// if(window.location.href.includes('http://www.zillow.com') || window.location.href.includes('https://www.zillow.com')) {
   document.body.appendChild(app);
   ReactDOM.render(
       <Main />, app);
-}
+// }
 
 console.log('Content script works!');
 console.log('Must reload extension for modifications to take effect.');

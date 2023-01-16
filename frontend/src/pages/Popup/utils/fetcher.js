@@ -2,7 +2,7 @@ import axios from "axios";
 import Config from "../../Config";
 
 const urlBase =
-  true
+  false
     ? Config.LOCAL_BACKEND_URL + "/api"
     : Config.BACKEND_URL + "/api";
 
@@ -11,9 +11,9 @@ export const apiCaller = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "*",
+    credentials: "omit"
   },
-  withCredentials: true,
+  withCredentials: false,
 });
 
 export const getErrorMessage = (err) => {

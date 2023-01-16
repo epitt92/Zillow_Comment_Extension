@@ -32,9 +32,15 @@ const addComment = (req , res)=> {
   })
   comment.save(err => {
       if(err){
-          res.send({ success:false })
+          res.send({ success:false, comments: [] })
       }else{
-          res.send({ success:true })
+        Comment.find({}, (err, comments) => {
+          if(comments){
+            res.send({success:true, comments})
+          }else{
+              res.send({success:false, comments: []})
+          }
+        })
       }
   })
 }

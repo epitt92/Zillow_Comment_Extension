@@ -2,6 +2,7 @@ import React, { Component, useState } from "react";
 // import CommentServices from "../services/CommentServices";
 // import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { apiCaller } from "../../Popup/utils/fetcher";
 
 const AddCommentComponent = ({setComments}) => {
   const [comment, setComment] = useState("");
@@ -10,16 +11,15 @@ const AddCommentComponent = ({setComments}) => {
     e.preventDefault();
     
     chrome.storage.local.get(null, async (obj) => {
-      let comment = {
+      let newComment = {
         username: obj.profile.name,
-        commentContent: comment,
+        content: comment,
         url: window.location.href
       };
-      const {
-        data: { success, comments }
-      } = await apiCaller.get("/comments");
+      console.log(newComment)
+      const {data: {success, comments}} = await apiCaller.post("/comments", comment);
       setComments(comments);
-      console.log("comments =>" + comments);
+      console.log("comments =>"), comments;
     })
   };
 
