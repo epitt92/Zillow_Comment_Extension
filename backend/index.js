@@ -5,6 +5,15 @@ const { register, login } = require('./controllers/UserController')
 const { getComment, getComments, addComment, deleteComment } = require('./controllers/CommentController')
 const app = express()
 
+var fs = require("fs");
+var https = require("https");
+
+
+https.createServer(options, (req, res) => {
+  res.writeHead(200);
+  res.end(`hello world\n`);
+}).listen(8000);
+
 app.use(express.json())
 app.use(express.urlencoded())
 app.use(cors({
@@ -31,6 +40,16 @@ app.post("/api/comments", addComment)
 // app.put("/api/comments/:id", register)
 app.delete("/api/comments/:id", deleteComment)
 
-app.listen(9002,()=>{
-    console.log("app is runing at 9002 port");
-})
+https
+  .createServer(
+    {
+      key: fs.readFileSync("server.key"),
+      cert: fs.readFileSync("server.cert"),
+    },
+    app
+  )
+  .listen(9002, function () {
+    console.log(
+      "Example app listening on port 3000! Go to https://localhost:3000/"
+    );
+});
