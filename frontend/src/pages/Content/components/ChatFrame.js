@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState, useRef } from 'react';
 import { apiCaller } from "../../Popup/utils/fetcher";
 
-const ChatFrame = ({comments, setComments}) => {
+const ChatFrame = () => {
 	const [cursor, setCursor] = useState();
   const [comments, setComments] = useState([]);
 	const [content, setContent] = useState('');
@@ -34,15 +34,13 @@ const ChatFrame = ({comments, setComments}) => {
     
     async function fetchData() {
 			let url = window.location.href;
-			url.replace("https://www.zillow.com/homedetails/");
 			const {
 				data: { comments }
-			} = await apiCaller.get("/comments/url");
+			} = await apiCaller.post("/comments/url", url);
 			setComments(comments);
 			setFetching(false);
     }
-    fetchData()
-
+    fetchData();
   }, []);
 
 	const handleSend = async (e) => {
