@@ -12,8 +12,9 @@ const getComments = (req , res)=> {
 }
 
 const getComment = (req , res)=> {
-  const { url } = req.body;
 
+  const { url } = req.body;
+  console.log("get comment:", url);
   Comment.find({url}, (err,comments)=>{
       if(comments){
           res.send({success:true, comments})
