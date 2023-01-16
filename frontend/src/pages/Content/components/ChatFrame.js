@@ -11,10 +11,12 @@ import { apiCaller } from "../../Popup/utils/fetcher";
 
 const ChatFrame = ({comments, setComments}) => {
 	const [cursor, setCursor] = useState();
+  const [comments, setComments] = useState([]);
 	const [content, setContent] = useState('');
+  const [fetching, setFetching] = useState(false);
 	const divRef = useRef(null);
 	const ref = useRef(null);
-	const fetching = false;
+	
 	useEffect(() => {
 		if (ref.current) {
 			ref.current.scrollIntoView({ behavior: 'smooth' });
@@ -26,6 +28,22 @@ const ChatFrame = ({comments, setComments}) => {
 			divRef.current.scrollTop = divRef.current.scrollHeight;
 		}
 	}, [comments, cursor]);
+
+	useEffect(() => {
+    setFetching(true);
+    
+    async function fetchData() {
+			let url = window.location.href;
+			url.replace("https://www.zillow.com/homedetails/");
+			const {
+				data: { comments }
+			} = await apiCaller.get("/comments/url");
+			setComments(comments);
+			setFetching(false);
+    }
+    fetchData()
+
+  }, []);
 
 	const handleSend = async (e) => {
     e.preventDefault();
@@ -39,7 +57,7 @@ const ChatFrame = ({comments, setComments}) => {
 				};
 				console.log(newComment)
 				const {data: {success, comments}} = await apiCaller.post("/comments", newComment);
-				
+				setContent("");
 				if(success){ 
 					setComments(comments);
 				}

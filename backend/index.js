@@ -29,7 +29,7 @@ app.post("/api/register", register)
 app.post("/api/login", login)
 
 app.get("/api/comments", getComments)
-app.get("/api/comments/:id", getComment)
+app.post("/api/comments/url", getComment)
 app.post("/api/comments", addComment)
 // app.put("/api/comments/:id", register)
 app.delete("/api/comments/:id", deleteComment)

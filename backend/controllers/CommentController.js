@@ -12,13 +12,13 @@ const getComments = (req , res)=> {
 }
 
 const getComment = (req , res)=> {
-  const id = req.params.id;
+  const { url } = req.body;
 
-  Comment.findById(id, (err,comment)=>{
-      if(comment){
-          res.send({success:true, comment})
+  Comment.find({url}, (err,comments)=>{
+      if(comments){
+          res.send({success:true, comments})
       }else{
-          res.send({success:false, comment: {}})
+          res.send({success:false, comments: []})
       }
   })
 }
@@ -35,7 +35,7 @@ const addComment = (req , res)=> {
       if(err){
           res.send({ success:false, comments: [] })
       }else{
-        Comment.find({}, (err, comments) => {
+        Comment.find({url}, (err, comments) => {
           if(comments){
             res.send({success:true, comments})
           }else{

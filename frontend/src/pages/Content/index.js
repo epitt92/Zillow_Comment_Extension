@@ -20,26 +20,19 @@ const darkTheme = createTheme({
 });
 
 const Main = () => {
-  const [comments, setComments] = useState([]);
   const [storage, setStorage] = useState({});
   const [fetching, setFetching] = useState(false);
-  const isUrl = window.location.href.includes("www.zillow.com/homedetails");
+  const [isUrl, setIsUrl] = useState(false);
 
   useEffect(() => {
     setFetching(true);
+    setIsUrl(window.location.href.includes("www.zillow.com/homedetails"));
     
     async function fetchData() {
       chrome.storage.local.get(null, async (obj) => {
         console.log(obj)
         setStorage({ ...obj });
-        if(obj.authFlag){
-          const {
-            data: { comments }
-          } = await apiCaller.get("/comments");
-          setComments(comments);
-        }
         setFetching(false);
-
       })
     }
     fetchData()
@@ -51,7 +44,7 @@ const Main = () => {
       {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"></link> */}
       {fetching ? (<LoadingPage />) : (<>
       {storage.authFlag ? (
-        <>{ isUrl ? <ChatFrame comments={comments} setComments={setComments} /> : (
+        <>{ isUrl ? <ChatFrame /> : (
           <Typography align="center" variant="h2" mt="20vh">
             Please go to listing page.
           </Typography>)}
@@ -69,7 +62,7 @@ app.id = "my-extension-root";
 // chrome.tabs.onCreated.addListener( (tabInfo) => {
 //   console.log("Tab iss created", tabInfo)
 // })
-// if(window.location.href.includes('http://www.zillow.com') || window.location.href.includes('https://www.zillow.com')) {
+if(window.location.href.includes('http://www.zillow.com') || window.location.href.includes('https://www.zillow.com')) {
   document.body.appendChild(app);
   const root = createRoot(app); // createRoot(container!) if you use TypeScript
   root.render(
@@ -77,7 +70,7 @@ app.id = "my-extension-root";
       <CssBaseline />
       <Main />
     </ThemeProvider>);
-// }
+}
 
 console.log('Content script works!');
 console.log('Must reload extension for modifications to take effect.');
