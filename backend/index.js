@@ -8,12 +8,6 @@ const app = express()
 var fs = require("fs");
 var https = require("https");
 
-
-https.createServer(options, (req, res) => {
-  res.writeHead(200);
-  res.end(`hello world\n`);
-}).listen(8000);
-
 app.use(express.json())
 app.use(express.urlencoded())
 app.use(cors({
