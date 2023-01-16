@@ -1,32 +1,69 @@
 import { printLine } from './modules/print';
-import AddCommentComponent from './components/AddCommentComponent';
-import ListCommentComponent from './components/ListCommentComponent';
+import ChatFrame from './components/ChatFrame';
+import LoadingPage from './components/LoadingPage';
 // import { Provider } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-// import store from '../Popup/redux/store';
 import { apiCaller } from "../Popup/utils/fetcher";
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { Typography } from '@mui/material';
+import { createRoot } from 'react-dom/client';
+
+const darkTheme = createTheme({
+	palette: {
+		mode: 'dark',
+	},
+	typography: {
+		fontFamily: 'Nunito',
+	},
+});
 
 const Main = () => {
   const [comments, setComments] = useState([]);
-  useEffect(async () => {
-    const {
-      data: { comments }
-    } = await apiCaller.get("/comments");
-    setComments(comments);
+  const [storage, setStorage] = useState({});
+  const [fetching, setFetching] = useState(false);
+  const isUrl = window.location.href.includes("www.zillow.com/homedetails");
+
+  useEffect(() => {
+    setFetching(true);
+    
+    async function fetchData() {
+      chrome.storage.local.get(null, async (obj) => {
+        console.log(obj)
+        setStorage({ ...obj });
+        if(obj.authFlag){
+          const {
+            data: { comments }
+          } = await apiCaller.get("/comments");
+          setComments(comments);
+        }
+        setFetching(false);
+
+      })
+    }
+    fetchData()
+
   }, []);
 
   return (
     <>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"></link>
-      <div className={'my-extension'}>
-          <h1>Comments</h1>
-          <ListCommentComponent comments={comments} />
-          <AddCommentComponent setComments={setComments} />
-      </div>
+      {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"></link> */}
+      {fetching ? (<LoadingPage />) : (<>
+      {storage.authFlag ? (
+        <>{ isUrl ? <ChatFrame comments={comments} setComments={setComments} /> : (
+          <Typography align="center" variant="h2" mt="20vh">
+            Please go to listing page.
+          </Typography>)}
+        </>) : (<Typography align="center" variant="h2" mt="20vh">
+            Please login to continue
+          </Typography>
+      )}</>
+      )}
     </>
   )
 }
+
 const app = document.createElement('div');
 app.id = "my-extension-root";
 // chrome.tabs.onCreated.addListener( (tabInfo) => {
@@ -34,8 +71,12 @@ app.id = "my-extension-root";
 // })
 // if(window.location.href.includes('http://www.zillow.com') || window.location.href.includes('https://www.zillow.com')) {
   document.body.appendChild(app);
-  ReactDOM.render(
-      <Main />, app);
+  const root = createRoot(app); // createRoot(container!) if you use TypeScript
+  root.render(
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <Main />
+    </ThemeProvider>);
 // }
 
 console.log('Content script works!');
