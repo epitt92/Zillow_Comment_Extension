@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import ACTIONS from "../../../Config/action";
 import { apiCaller } from "../../utils/fetcher";
+import { showNotification } from "../../utils";
 
 import {
   goBack,
@@ -27,7 +28,6 @@ export const registerAction = createAsyncThunk(
       const {
         data: { isAuth },
       } = await apiCaller.post("/register", user);
-      console.log("ISATUTH", isAuth)
       dispatch(setAuthFlag(isAuth));
       dispatch(setProfile(user));
       isAuth ? goTo(Homepage) : goTo(Login);
@@ -53,7 +53,19 @@ export const loginAction = createAsyncThunk(
       });
       dispatch(setAuthFlag(isAuth));
       dispatch(setProfile(user));
-      isAuth ? goTo(Homepage) : goTo(Login);
+      if(isAuth){
+        goTo(Homepage)
+      } else {
+        const opts = {
+          type: 'basic',
+          iconUrl: 'icon-128.png',
+          title: 'Zillow Extension',
+          message: `Please input the correct email and password.`,
+        };
+        showNotification('connect-vpn', opts, 3000);
+        goTo(Login);
+      }
+      
       response = true;
 
     } catch (err) { }

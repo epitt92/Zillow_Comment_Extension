@@ -49,11 +49,19 @@ const addComment = (req , res)=> {
 
 const deleteComment = (req , res)=> {
   const id = req.params.id;
+  console.log("deltete")
   Comment.deleteOne({_id: id}, (err, count) => {
-    if(count) {
+    console.log(count)
+    if(!count) {
       res.send({ success:false })
     }else{
-      res.send({ success:true })
+      Comment.find({}, (err, comments) => {
+        if(comments){
+          res.send({success:true, comments})
+        }else{
+          res.send({success:false, comments: []})
+        }
+      })
     }
   })
 }

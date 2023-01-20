@@ -19,14 +19,15 @@ const darkTheme = createTheme({
 	},
 });
 
-const Main = () => {
+const Main = ({url}) => {
   const [storage, setStorage] = useState({});
   const [fetching, setFetching] = useState(false);
   const [isUrl, setIsUrl] = useState(false);
 
   useEffect(() => {
+    console.log("Recalcuate11")
     setFetching(true);
-    setIsUrl(window.location.href.includes("www.zillow.com/homedetails"));
+    setIsUrl(url.includes("www.zillow.com/homedetails") || url.includes("www.zillow.com/b/"));
     
     async function fetchData() {
       chrome.storage.local.get(null, async (obj) => {
@@ -37,7 +38,7 @@ const Main = () => {
     }
     fetchData()
 
-  }, []);
+  }, [url]);
 
   return (
     <>
@@ -68,9 +69,25 @@ if(window.location.href.includes('http://www.zillow.com') || window.location.hre
   root.render(
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <Main />
+      <Main url={window.location.href} />
     </ThemeProvider>);
 }
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    // listen for messages sent from background.js
+    if (request.message === 'urlupdated') {
+      if(request.url.includes('http://www.zillow.com') || request.url.includes('https://www.zillow.com')) {
+        document.body.appendChild(app);
+        const root = createRoot(app); // createRoot(container!) if you use TypeScript
+        root.render(
+          <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <Main url={request.url} />
+          </ThemeProvider>);
+      }
+    }
+    sendResponse();
+});
 
 console.log('Content script works!');
 console.log('Must reload extension for modifications to take effect.');

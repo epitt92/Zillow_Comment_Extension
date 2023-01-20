@@ -17,7 +17,8 @@ import Homepage from './Homepage';
 import Popup from '../Popup';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from '../redux/slices/authSlice';
-  
+import { showNotification } from '../utils';
+
 const Login = () =>{
     
 	const dispatch = useDispatch();
@@ -38,9 +39,15 @@ const Login = () =>{
     const handleloginclick = () =>{
         const { email, pwd } = User
         if(email && pwd){
-          dispatch( loginAction( {email, pwd} ) )
+            dispatch( loginAction( {email, pwd} ) )
         } else {
-					alert("Enter Valid Value");
+			const opts = {
+                type: 'basic',
+                iconUrl: 'icon-128.png',
+                title: 'Zillow Extension',
+                message: `Email and password must be not empty.`,
+            };
+            showNotification('connect-vpn', opts, 3000);
         }
     }
     

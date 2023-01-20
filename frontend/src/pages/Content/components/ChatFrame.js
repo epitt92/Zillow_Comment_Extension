@@ -36,7 +36,7 @@ const ChatFrame = () => {
 			let url = window.location.href;
 			const {
 				data: { comments }
-			} = await apiCaller.post("/comments/url", url);
+			} = await apiCaller.post("/comments/url", { url });
 			setComments(comments);
 			setFetching(false);
     }

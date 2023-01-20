@@ -9,6 +9,15 @@ export const minifyAddress = (address, rate) => {
   );
 };
 
+
+// Show Notification
+export const showNotification = (title, options, expireTime) => {
+  chrome.notifications.create(title, options, function (notificationId) {
+      setTimeout(() => {
+          chrome.notifications.clear(notificationId);
+      }, expireTime);
+  });
+}
 //Minify string length
 export const minifyString = (str, len) => {
   if (str == null || str == undefined) return "";
