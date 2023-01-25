@@ -52,20 +52,20 @@ app.delete('/api/comments/:id', deleteComment);
 app.get('/api/users', getUsers);
 app.delete('/api/users/:id', deleteUsers);
 
-// https
-// 	.createServer(
-// 		{
-// 			key: fs.readFileSync('server.key'),
-// 			cert: fs.readFileSync('server.cert'),
-// 		},
-// 		app,
-// 	)
-// 	.listen(9002, function () {
-// 		console.log(
-// 			'Example app listening on port 3000! Go to https://localhost:3000/',
-// 		);
-// 	});
+https
+	.createServer(
+		{
+			key: fs.readFileSync('server.key'),
+			cert: fs.readFileSync('server.cert'),
+		},
+		app,
+	)
+	.listen(9002, function () {
+		console.log(
+			'Example app listening on port 3000! Go to https://localhost:3000/',
+		);
+	});
 
-app.listen(9002, () => {
-	console.log('app is runing at 9002 port');
-});
+// app.listen(9002, () => {
+// 	console.log('app is runing at 9002 port');
+// });
