@@ -1,6 +1,16 @@
+#zillow-site{
+  padding-right: 300px;
+}
+#search-detail-lightbox{
+  padding-right: 300px;
+}
+#details-page-container{
+  width: calc(100% - (72px * 2)) !important;
+}
+
 #my-extension-root {
-  width: 400px;
-  height: 60%;
+  width: 300px;
+  height: 100vh;
   position: fixed;
   bottom: 0px;
   right: 0px;

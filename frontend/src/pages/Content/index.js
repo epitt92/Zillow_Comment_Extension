@@ -1,92 +1,113 @@
-import { printLine } from './modules/print';
 import ChatFrame from './components/ChatFrame';
 import LoadingPage from './components/LoadingPage';
 // import { Provider } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { apiCaller } from "../Popup/utils/fetcher";
+import { apiCaller } from '../Popup/utils/fetcher';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 import { createRoot } from 'react-dom/client';
 
 const darkTheme = createTheme({
-	palette: {
-		mode: 'dark',
-	},
-	typography: {
-		fontFamily: 'Nunito',
-	},
+  palette: {
+    mode: 'dark',
+  },
+  typography: {
+    fontFamily: 'Nunito',
+  },
 });
 
-const Main = ({url}) => {
+const Main = ({ url }) => {
   const [storage, setStorage] = useState({});
   const [fetching, setFetching] = useState(false);
   const [isUrl, setIsUrl] = useState(false);
 
   useEffect(() => {
-    console.log("Recalcuate11")
     setFetching(true);
-    setIsUrl(url.includes("www.zillow.com/homedetails") || url.includes("www.zillow.com/b/"));
-    
+    setIsUrl(
+      url.includes('www.zillow.com/homedetails') ||
+        url.includes('www.zillow.com/b/')
+    );
+
     async function fetchData() {
       chrome.storage.local.get(null, async (obj) => {
-        console.log(obj)
+        console.log(obj);
         setStorage({ ...obj });
         setFetching(false);
-      })
+      });
     }
-    fetchData()
-
+    fetchData();
   }, [url]);
 
   return (
     <>
-      {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"></link> */}
-      {fetching ? (<LoadingPage />) : (<>
-      {storage.authFlag ? (
-        <>{ isUrl ? <ChatFrame /> : (
-          <Typography align="center" variant="h2" mt="20vh">
-            Please go to listing page.
-          </Typography>)}
-        </>) : (<Typography align="center" variant="h2" mt="20vh">
-            Please login to continue
-          </Typography>
-      )}</>
+      {fetching ? (
+        <LoadingPage />
+      ) : (
+        <>
+          {storage.authFlag ? (
+            <>
+              {isUrl ? (
+                <ChatFrame />
+              ) : (
+                <Typography align="center" variant="h3" mt="10%">
+                  Please go to listing page.
+                </Typography>
+              )}
+            </>
+          ) : (
+            <Typography align="center" variant="h3" mt="10%">
+              Please login to continue
+            </Typography>
+          )}
+        </>
       )}
     </>
-  )
-}
+  );
+};
 
 const app = document.createElement('div');
-app.id = "my-extension-root";
+const bodyEle = document.createElement('div');
+bodyEle.innerHTML = document.body.innerHTML;
+bodyEle.id = 'zillow-site';
+app.id = 'my-extension-root';
 // chrome.tabs.onCreated.addListener( (tabInfo) => {
 //   console.log("Tab iss created", tabInfo)
 // })
-if(window.location.href.includes('http://www.zillow.com') || window.location.href.includes('https://www.zillow.com')) {
+if (
+  window.location.href.includes('http://www.zillow.com') ||
+  window.location.href.includes('https://www.zillow.com')
+) {
+  document.body.innerHTML = '';
+  document.body.appendChild(bodyEle);
   document.body.appendChild(app);
   const root = createRoot(app); // createRoot(container!) if you use TypeScript
   root.render(
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Main url={window.location.href} />
-    </ThemeProvider>);
+    </ThemeProvider>
+  );
 }
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    // listen for messages sent from background.js
-    if (request.message === 'urlupdated') {
-      if(request.url.includes('http://www.zillow.com') || request.url.includes('https://www.zillow.com')) {
-        document.body.appendChild(app);
-        const root = createRoot(app); // createRoot(container!) if you use TypeScript
-        root.render(
-          <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
-            <Main url={request.url} />
-          </ThemeProvider>);
-      }
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  // listen for messages sent from background.js
+  if (request.message === 'urlupdated') {
+    if (
+      request.url.includes('http://www.zillow.com') ||
+      request.url.includes('https://www.zillow.com')
+    ) {
+      document.body.appendChild(app);
+      const root = createRoot(app); // createRoot(container!) if you use TypeScript
+      root.render(
+        <ThemeProvider theme={darkTheme}>
+          <CssBaseline />
+          <Main url={request.url} />
+        </ThemeProvider>
+      );
     }
-    sendResponse();
+  }
+  sendResponse();
 });
 
 console.log('Content script works!');
@@ -131,18 +152,16 @@ if(window.location.href.includes('http://zillowsdf.com') || window.location.href
 }
 */
 
-
-
 function addStyleDom(ele, href, flag) {
   const linkElem = document.createElement('link');
   linkElem.setAttribute('rel', 'stylesheet');
-  if(flag) {
+  if (flag) {
     linkElem.setAttribute('href', chrome.runtime.getURL(href));
   } else {
     linkElem.setAttribute('href', href);
   }
-  if(!!ele) {
-    console.log("BBT")
+  if (!!ele) {
+    console.log('BBT');
     ele.appendChild(linkElem);
   }
 }
